@@ -467,6 +467,13 @@ module.exports = {
       .setValue('20')
       .setLabel(_('Scale on Y axis'))
       .setType('number');
+    displacementProperties
+      .getOrCreate('wrapMode')
+      .setValue('Repeat')
+      .setType('choice')
+      .addExtraInfo('Repeat')
+      .addExtraInfo('No repeat')
+      .setLabel(_('Repeat mode'));
 
     const dotEffect = extension
       .addEffect('Dot')
