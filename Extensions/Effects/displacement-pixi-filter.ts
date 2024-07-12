@@ -2,6 +2,7 @@ namespace gdjs {
   interface DisplacementFilterNetworkSyncData {
     sx: number;
     sy: number;
+    wm: number;
   }
   gdjs.PixiFiltersTools.registerFilterCreator(
     'Displacement',
@@ -12,7 +13,7 @@ namespace gdjs {
           .getGame()
           .getImageManager()
           .getPIXITexture(effectData.stringParameters.displacementMapTexture);
-        displacementMapTexture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
+        displacementMapTexture.baseTexture.wrapMode = effectData.stringParameters.wrapMode || PIXI.WRAP_MODES.REPEAT;
         const displacementSprite = new PIXI.Sprite(displacementMapTexture);
         const displacementFilter = new PIXI.DisplacementFilter(
           displacementSprite
@@ -47,7 +48,16 @@ namespace gdjs {
         filter: PIXI.Filter,
         parameterName: string,
         value: string
-      ) {}
+      ) {
+        const displacementFilter = filter as unknown as PIXI.DisplacementFilter;
+
+        if (parameterName === 'wrapMode') {
+          displacementFilter.maskSprite._texture.baseTexture.wrapMode =
+            value === 'No Repeat'
+              ? PIXI.WRAP_MODES.CLAMP
+              : PIXI.WRAP_MODES.REPEAT;
+        }
+      }
       updateColorParameter(
         filter: PIXI.Filter,
         parameterName: string,
@@ -68,6 +78,7 @@ namespace gdjs {
         return {
           sx: displacementFilter.scale.x,
           sy: displacementFilter.scale.y,
+          wm: displacementFilter.maskSprite._texture.baseTexture.wrapMode,
         };
       }
       updateFromNetworkSyncData(
@@ -77,6 +88,7 @@ namespace gdjs {
         const displacementFilter = (filter as unknown) as PIXI.DisplacementFilter;
         displacementFilter.scale.x = data.sx;
         displacementFilter.scale.y = data.sy;
+        displacementFilter.scale.y = data.wm;
       }
     })()
   );
