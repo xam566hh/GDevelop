@@ -88,7 +88,7 @@ namespace gdjs {
         const displacementFilter = (filter as unknown) as PIXI.DisplacementFilter;
         displacementFilter.scale.x = data.sx;
         displacementFilter.scale.y = data.sy;
-        displacementFilter.scale.y = data.wm;
+        displacementFilter.maskSprite._texture.baseTexture.wrapMode = data.wm;
       }
     })()
   );
